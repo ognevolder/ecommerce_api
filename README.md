@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://ognevolder.pro" target="_blank">
-    <h1>.ognevolder</h1>
+    .ognevolder
   </a>
 </p>
 
