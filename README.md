@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://ognevolder.pro" target="_blank">
-    .ognevolder
+    <img src="/ecommerce-api/resources/ognevolder.svg" width="400" alt="Ognevolder Logo"></img>
   </a>
 </p>
 
