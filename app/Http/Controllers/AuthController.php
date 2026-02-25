@@ -42,12 +42,14 @@ class AuthController extends Controller
             }
 
         $user = User::where('email', $request->email)->first();
+        $role = $user->role;
         $user->tokens()->delete();
-        $token = $user->createToken('auth_token', ['*'], Carbon::now()->addMinutes(180))->plainTextToken;
+        $token = $user->createToken('auth_token', [$role], Carbon::now()->addMinutes(180))->plainTextToken;
         //Response/redirect
         return response()->json([
             'message' => 'Logged In',
             'user' => $user,
+            'role' => $user->role,
             'token' => $token
         ]);
     }
