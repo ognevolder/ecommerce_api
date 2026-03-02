@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -14,8 +15,16 @@ Route::get('/product/{id}', [ProductController::class, 'show']);
 //Auth
 Route::middleware('auth:sanctum')->group(function ()
 {
+  Route::middleware('auth:sanctum')->get('/profile', function ()
+  {
+    return response()->json([
+      'message' => 'You entered into Profile page.',
+      'status' => '200'
+    ]);
+  });
   Route::post('/logout', [AuthController::class, 'logout']);
   Route::post('/orders', [OrderController::class, 'store']);
+  Route::get('/orders', [OrderController::class, 'index']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function ()
@@ -34,13 +43,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function ()
   Route::patch('/product/{id}', [ProductController::class, 'store']);
   // Delete Product
   Route::delete('/product/{id}', [ProductController::class, 'destroy']);
-});
 
-
-Route::middleware('auth:sanctum')->get('/profile', function ()
-{
-  return response()->json([
-    'message' => 'You entered into Profile page.',
-    'status' => '200'
-  ]);
+  // Get Order
+  Route::get('/admin/order/{id}', [AdminController::class, 'show']);
+  // Get All Orders
+  Route::get('/admin/orders', [AdminController::class, 'index']);
 });

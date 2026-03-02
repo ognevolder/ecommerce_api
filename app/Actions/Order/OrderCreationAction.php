@@ -11,7 +11,8 @@ class OrderCreationAction
   {
     return $user->orders()->create([
       'total_price' => 0,
-      'status' => 'Pending'
+      'status' => 'Pending',
+      'payment_status' => 'Awaiting payment'
     ]);
   }
 }
