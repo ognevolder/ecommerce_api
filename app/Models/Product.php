@@ -11,4 +11,9 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'description', 'price', 'stock'];
+
+    public function availability(): int
+    {
+        return $this->stock - $this->reserved;
+    }
 }

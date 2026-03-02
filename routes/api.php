@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +12,11 @@ Route::get('/products', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
 
 //Auth
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->group(function ()
+{
+  Route::post('/logout', [AuthController::class, 'logout']);
+  Route::post('/orders', [OrderController::class, 'store']);
+});
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function ()
 {
