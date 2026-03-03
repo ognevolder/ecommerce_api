@@ -49,9 +49,11 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderRequest $request, Order $order)
+    public function update($id)
     {
-        //
+        $order = Order::where('id', $id)->firstOrFail();
+        $order->update(['payment_status' => 'Paid']);
+        return ApiResponse::success(new OrderResource($order), 'Оплата успішна.');
     }
 
     /**

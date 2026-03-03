@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function ()
       'status' => '200'
     ]);
   });
+  Route::patch('/order/{id}', [OrderController::class, 'update']);
   Route::post('/logout', [AuthController::class, 'logout']);
   Route::post('/orders', [OrderController::class, 'store']);
   Route::get('/orders', [OrderController::class, 'index']);
@@ -48,4 +49,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function ()
   Route::get('/admin/order/{id}', [AdminController::class, 'show']);
   // Get All Orders
   Route::get('/admin/orders', [AdminController::class, 'index']);
+  // Fulfill order
+  Route::patch('/admin/order/{id}', [AdminController::class, 'update']);
 });
