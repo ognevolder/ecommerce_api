@@ -4,9 +4,14 @@ namespace App\Services;
 
 use App\Actions\Order\InventoryCheckAction;
 use App\Actions\Order\ItemInitializationAction;
+use App\Actions\Order\OrderCancelationAction;
 use App\Actions\Order\OrderCreationAction;
+use App\Exceptions\ApiException;
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\User;
+use App\Support\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -14,7 +19,8 @@ class OrderService
   public function __construct(
     private InventoryCheckAction $check,
     private OrderCreationAction $order,
-    private ItemInitializationAction $item
+    private ItemInitializationAction $item,
+    private OrderCancelationAction $cancelation
   )
   {}
 
@@ -52,6 +58,41 @@ class OrderService
 
       // Return Order
       return $order;
+    });
+  }
+
+
+  public function cancel(int $user_id, int $order_id): Order
+  {
+    // Fetch Order
+    $order = Order::with('items.product')
+      ->where('id', $order_id)
+      ->lockForUpdate()
+      ->firstOrFail();
+    // Fetch User
+    $user = User::with('orders')->where('id', $user_id)->firstOrFail();
+    // Автентифікація користувача | User auth check
+    if ($order->user_id !== $user_id && $user->role !== 'admin')
+    {
+      throw new ApiException($order, 'Неможливо виконати дію.', 401);
+    }
+
+    // Service
+    return DB::transaction(function () use ($order)
+    {
+      // Cancel reservation
+      foreach ($order->items as $item)
+      {
+        $product = $item->product;
+        $product->decrement('reserved', $item->quantity);
+      }
+
+      $order->update([
+        'status' => 'Canceled'
+      ]);
+
+      // Response
+      return $order->fresh()->load('items.product');
     });
   }
 }

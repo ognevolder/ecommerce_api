@@ -59,8 +59,12 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function cancel(Request $request, $order_id)
     {
-        //
+        $order = $this->service->cancel($request->user()->id, $order_id);
+        return ApiResponse::success(
+          new OrderResource($order),
+          'Замовлення скасовано.'
+        );
     }
 }

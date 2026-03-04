@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function ()
   Route::post('/logout', [AuthController::class, 'logout']);
   Route::post('/orders', [OrderController::class, 'store']);
   Route::get('/orders', [OrderController::class, 'index']);
+  Route::patch('/order/cancel/{id}', [OrderController::class, 'cancel']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function ()
