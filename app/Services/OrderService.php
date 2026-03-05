@@ -6,6 +6,7 @@ use App\Actions\Order\InventoryCheckAction;
 use App\Actions\Order\ItemInitializationAction;
 use App\Actions\Order\OrderCancelationAction;
 use App\Actions\Order\OrderCreationAction;
+use App\Actions\Order\OrderFulfillAction;
 use App\Exceptions\ApiException;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
@@ -20,7 +21,8 @@ class OrderService
     private InventoryCheckAction $check,
     private OrderCreationAction $order,
     private ItemInitializationAction $item,
-    private OrderCancelationAction $cancelation
+    private OrderCancelationAction $cancelation,
+    private OrderFulfillAction $fulfill
   )
   {}
 
@@ -61,6 +63,21 @@ class OrderService
     });
   }
 
+  public function fulfill(int $order_id): Order
+  {
+    $order = Order::with('items.product')
+      ->where('id', $order_id)
+      ->lockForUpdate()
+      ->firstOrFail();
+
+    if ($order->status === 'Fulfilled')
+    {
+      throw new ApiException($order, 'Неможливо виконати дію.', 422);
+    }
+
+    return $this->fulfill->execute($order);
+  }
+
 
   public function cancel(int $user_id, int $order_id): Order
   {
@@ -70,11 +87,16 @@ class OrderService
       ->lockForUpdate()
       ->firstOrFail();
     // Fetch User
-    $user = User::with('orders')->where('id', $user_id)->firstOrFail();
+    $user = User::findOrFail($user_id);
     // Автентифікація користувача | User auth check
     if ($order->user_id !== $user_id && $user->role !== 'admin')
     {
       throw new ApiException($order, 'Неможливо виконати дію.', 401);
+    }
+
+    if ($order->status === 'Canceled')
+    {
+      throw new ApiException($order, 'Неможливо виконати дію.', 422);
     }
 
     // Service

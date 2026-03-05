@@ -10,7 +10,7 @@ use App\Services\OrderService;
 use App\Support\ApiResponse;
 use Illuminate\Http\Request;
 
-class OrderController extends Controller
+class OrderController
 {
     public function __construct(
         private OrderService $service

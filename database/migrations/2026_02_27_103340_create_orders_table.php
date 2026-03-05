@@ -15,9 +15,18 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->decimal('total_price');
-            $table->string('status')->default('Pending');
-            $table->string('payment_status')->default('Awaiting payment');
+            $table->enum('status', [
+                \App\Enums\OrderStatus::New->value,
+                \App\Enums\OrderStatus::Pending->value,
+                \App\Enums\OrderStatus::Fulfilled->value,
+                \App\Enums\OrderStatus::Canceled->value
+            ])->default(\App\Enums\OrderStatus::New->value);
+            $table->enum('payment_status', [
+                \App\Enums\PaymentStatus::Pending->value,
+                \App\Enums\PaymentStatus::Paid->value
+            ])->default(\App\Enums\PaymentStatus::Pending->value);
             $table->timestamps();
+            $table->timestamp('expires_at');
         });
     }
 

@@ -6,7 +6,7 @@
 
 ## Ecommerce API project
 
-Back-end REST API built with Laravel.
+Back-end REST API e-commerce project built with Laravel.
 
 ## Tech Stack
 
@@ -24,13 +24,15 @@ Back-end REST API built with Laravel.
 
 ## API endpoints
 
-#Public
-POST /api/registration - User Registration
-POST /api/login - User Authorization
+- POST /api/registration - User Registration
+- POST /api/login - User Authorization
+- POST /api/logout - User Log Out
 
-GET /api/products - List of products
-GET /api/product/{id} - Show single product
+- GET /api/products - List of products
+- GET /api/product/{id} - Show single product
 
-POST /api/orders - Create order (Auth)
-GET /api/orders/{id} - List of user orders
-GET /api/admin/orders - Index all orders
+- POST /api/orders - Create order (Auth)
+- GET /api/orders/{id} - List of user orders
+- GET /api/admin/orders - Index all orders
+- PATCH /api/order/{id} - Change Order
+- PATCH /api/order/cancel/{id} - Cancel Order

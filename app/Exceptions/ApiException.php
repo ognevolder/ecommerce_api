@@ -11,7 +11,7 @@ class ApiException extends Exception
     protected $status;
     protected $data;
 
-    public function __construct($data, string $message = "", int $status = 400)
+    public function __construct($data = null, string $message = "", int $status = 400)
     {
         parent::__construct($message);
         $this->status = $status;

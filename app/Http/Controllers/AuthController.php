@@ -2,34 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ApiException;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\AuthService;
+use App\Support\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class AuthController extends Controller
+class AuthController
 {
-    public function register(RegistrationRequest $request)
+    public function __construct(private AuthService $service)
+    {}
+
+    public function register(RegistrationRequest $request): JsonResponse
     {
-        //Validate data
-        $attributes = $request->validated();
-        //Create user
-        $user = User::create($attributes);
-        //Return token
-        $user->tokens()->delete();
-        $token = $user->createToken('auth_token')->plainTextToken;
-        //Response
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ]);
+        // Create User
+        $user = $this->service->register($request->validated());
+        // Response
+        if (! $user) {
+            throw new ApiException('Не вдалося зареєструвати користувача.', 400);
+        }
+        return ApiResponse::success(new UserResource($user), 'Реєстрація успішна!', 201);
     }
 
     public function login(LoginRequest $request)
     {
-        //Validation
+        $user = User::where('email', $request->email)->first();
+
         $credentials = $request->validated();
         $status = Auth::attempt($credentials);
         //Login
@@ -41,7 +45,7 @@ class AuthController extends Controller
                 ]);
             }
 
-        $user = User::where('email', $request->email)->first();
+
         $role = $user->role;
         $user->tokens()->delete();
         $token = $user->createToken('auth_token', [$role], Carbon::now()->addMinutes(180))->plainTextToken;

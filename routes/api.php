@@ -51,5 +51,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function ()
   // Get All Orders
   Route::get('/admin/orders', [AdminController::class, 'index']);
   // Fulfill order
-  Route::patch('/admin/order/{id}', [AdminController::class, 'update']);
+  Route::patch('/admin/order/{id}', [AdminController::class, 'fulfill']);
+  // Cancel order
+  Route::patch('/admin/order/{id}', [OrderController::class, 'cancel']);
 });
