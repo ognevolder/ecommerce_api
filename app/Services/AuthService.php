@@ -2,13 +2,23 @@
 
 namespace App\Services;
 
+use App\Actions\Auth\TokenCreationAction;
+use App\Actions\Auth\UserLoginAction;
 use App\Exceptions\ApiException;
+use App\Http\Resources\LoggedUserResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Support\ApiResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
+  public function __construct(
+    private UserLoginAction $login,
+    private TokenCreationAction $token
+  ) {}
+
   /**
    * Create User
    *
@@ -20,17 +30,23 @@ class AuthService
     return User::create($attributes);
   }
 
-  public function login(array $credentials, User $user): User
+  /**
+   * Login user
+   *
+   * @param array $credentials
+   * @param User $user
+   * @return User
+   */
+  public function login(array $credentials, User $user): array
   {
-    $status = Auth::attempt($credentials);
-    if (! $status) {
-      throw new ApiException('Не вдалося авторизуватися.', 401);
-    }
-    $role = $user->role;
-    $user->tokens()->delete();
-    $token = $user->createToken('auth_token', [$role], Carbon::now()->addMinutes(180))->plainTextToken;
-    // return DTO
+    // Login attempt
+    $this->login->execute($credentials);
+    // Token
+    $token = $this->token->execute($user);
+    // Response
+    return [
+      'user' => $user,
+      'token' => $token
+    ];
   }
-
-
 }

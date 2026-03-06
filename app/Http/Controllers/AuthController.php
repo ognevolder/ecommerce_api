@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Exceptions\ApiException;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
+use App\Http\Resources\LoggedUserResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController
 {
@@ -30,39 +29,22 @@ class AuthController
         return ApiResponse::success(new UserResource($user), 'Реєстрація успішна!', 201);
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
+        // Fetch User
         $user = User::where('email', $request->email)->first();
-
-        $credentials = $request->validated();
-        $status = Auth::attempt($credentials);
-        //Login
-        if (! $status)
-            {
-                return response()->json([
-                    'message' => 'Error is occured.',
-                    'status' => '401'
-                ]);
-            }
-
-
-        $role = $user->role;
-        $user->tokens()->delete();
-        $token = $user->createToken('auth_token', [$role], Carbon::now()->addMinutes(180))->plainTextToken;
-        //Response/redirect
-        return response()->json([
-            'message' => 'Logged In',
-            'user' => $user,
-            'role' => $user->role,
-            'token' => $token
-        ]);
+        // Login
+        $loggedUser = $this->service->login($request->validated(), $user);
+        // Response
+        return ApiResponse::success(
+            new LoggedUserResource($loggedUser),
+            'Успішний вхід у систему.',
+            200);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json([
-            'message' => 'Logged Out'
-        ]);
+        return ApiResponse::success(message: 'Вихід із системи.', code: 200);
     }
 }
