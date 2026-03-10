@@ -41,7 +41,8 @@ Eloquent Models represent database entities. Define relationships, scopes and at
 
 - Order -> hasMany(OrderItems).
 - User -> hasMany(Orders).
-- Product -> belongsTo(User).
+- Product -> belongsTo(OrderItems).
+- OrderItem -> belongsTo(Order).
 
 # Key Principles
 
@@ -69,7 +70,6 @@ The project follows several backend engineering principles:
 - POST /api/registration - User Registration
 - POST /api/login - User Authorization
 - POST /api/logout - User Log Out
-
 - GET /api/products - List of products
 - GET /api/product/{id} - Show single product
 
