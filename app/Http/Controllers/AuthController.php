@@ -18,29 +18,18 @@ class AuthController
     public function __construct(private AuthService $service)
     {}
 
-    public function register(RegistrationRequest $request): JsonResponse
+    public function register(RegistrationRequest $request)
     {
         // Create User
         $user = $this->service->register($request->validated());
         // Response
-        if (! $user) {
-            throw new ApiException('Не вдалося зареєструвати користувача.', 400);
-        }
         return ApiResponse::success(new UserResource($user), 'Реєстрація успішна!', 201);
     }
 
-    public function login(LoginRequest $request): JsonResponse
-    {
-        // Fetch User
-        $user = User::where('email', $request->email)->first();
-        // Login
-        $loggedUser = $this->service->login($request->validated(), $user);
-        // Response
-        return ApiResponse::success(
-            new LoggedUserResource($loggedUser),
-            'Успішний вхід у систему.',
-            200);
-    }
+    // public function login(LoginRequest $request): JsonResponse
+    // {
+
+    // }
 
     public function logout(Request $request): JsonResponse
     {

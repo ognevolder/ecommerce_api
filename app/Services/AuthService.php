@@ -3,20 +3,19 @@
 namespace App\Services;
 
 use App\Actions\Auth\TokenCreationAction;
-use App\Actions\Auth\UserLoginAction;
-use App\Exceptions\ApiException;
-use App\Http\Resources\LoggedUserResource;
+use App\Actions\Auth\UserValidationAction;
+use App\Actions\Auth\UserRegistrationAction;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Support\ApiResponse;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
   public function __construct(
-    private UserLoginAction $login,
-    private TokenCreationAction $token
+    private UserValidationAction $validation,
+    private TokenCreationAction $token,
+    private UserRegistrationAction $registration
   ) {}
 
   /**
@@ -25,9 +24,19 @@ class AuthService
    * @param array $attributes
    * @return User
    */
-  public function register(array $attributes): User
+  public function register(array $attributes)
   {
-    return User::create($attributes);
+    // Create User
+    $this->registration->execute($attributes);
+    // Validate User
+    $user = $this->validation->execute($attributes);
+    // Create access API-token
+    $token = $this->token->execute($user);
+    // Return
+    return [
+      'user' => $user,
+      'token' => $token
+    ];
   }
 
   /**
@@ -37,16 +46,8 @@ class AuthService
    * @param User $user
    * @return User
    */
-  public function login(array $credentials, User $user): array
+  public function login(array $credentials, User $user)
   {
-    // Login attempt
-    $this->login->execute($credentials);
-    // Token
-    $token = $this->token->execute($user);
-    // Response
-    return [
-      'user' => $user,
-      'token' => $token
-    ];
+    //
   }
 }
