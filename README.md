@@ -19,7 +19,7 @@ Back-end REST API e-commerce project built with Laravel. Contains basic CMS.
 This project follows a layered architecture with separation of responsibilities between controllers, actions, services and models.
 The goal is to keep controllers thin, move business logic to services/actions and make the code easier to maintain and test.
 
-## Layers
+#### Layers
 
 Request -> Controller -> Service -> Action -> Model -> Database.
 
@@ -33,7 +33,7 @@ Request -> Controller -> Service -> Action -> Model -> Database.
 
 # API endpoints
 
-## Public
+#### Public
 
 - POST /api/registration - User Registration
 - POST /api/login - User Authorization
