@@ -23,6 +23,37 @@ The goal is to keep controllers thin, move business logic to services/actions an
 
 Request -> Controller -> Service -> Action -> Model -> Database.
 
+#### Controller
+
+Handle HTTP requests and responses. Validates incoming data, calls services and returns JSON-response. Controller do not contain business logic.
+
+#### Service
+
+Service contain business logic and domain workflows, coordinate models, actions and policies.
+
+- OrderService (create(), fulfill(), cancel()).
+- AuthService (register(), login(), logout()).
+- ProductService (create(), update(), delete(), show()).
+
+#### Models
+
+Eloquent Models represent database entities. Define relationships, scopes and attribute casting.
+
+- Order -> hasMany(OrderItems).
+- User -> hasMany(Orders).
+- Product -> belongsTo(User).
+
+# Key Principles
+
+The project follows several backend engineering principles:
+
+- Thin controllers.
+- Single responsibility.
+- Separation of concerns.
+- Reusable services.
+- Clear domain logic.
+- API-first design.
+
 # Installation
 
 1. Clone repository.
@@ -39,11 +70,16 @@ Request -> Controller -> Service -> Action -> Model -> Database.
 - POST /api/login - User Authorization
 - POST /api/logout - User Log Out
 
-* GET /api/products - List of products
-* GET /api/product/{id} - Show single product
+- GET /api/products - List of products
+- GET /api/product/{id} - Show single product
 
-* POST /api/orders - Create order (Auth)
-* GET /api/orders/{id} - List of user orders
-* GET /api/admin/orders - Index all orders
-* PATCH /api/order/{id} - Change Order
-* PATCH /api/order/cancel/{id} - Cancel Order
+#### Auth
+
+- POST /api/orders - Create order
+- GET /api/orders/{id} - List of personal orders
+- PATCH /api/order/{id} - Change personal Order
+- PATCH /api/order/cancel/{id} - Cancel personal Order
+
+#### CMS
+
+- GET /api/admin/orders - Index all orders
