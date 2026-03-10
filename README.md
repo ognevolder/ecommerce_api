@@ -4,17 +4,26 @@
   </a>
 </p>
 
-## Ecommerce API project
+# Ecommerce API project
 
-Back-end REST API e-commerce project built with Laravel.
+Back-end REST API e-commerce project built with Laravel. Contains basic CMS.
 
-## Tech Stack
+# Tech Stack
 
 - PHP 8+
 - Laravel
 - MySQL
 
-## Installation
+# Architecture
+
+This project follows a layered architecture with separation of responsibilities between controllers, actions, services and models.
+The goal is to keep controllers thin, move business logic to services/actions and make the code easier to maintain and test.
+
+## Layers
+
+Request -> Controller -> Service -> Action -> Model -> Database.
+
+# Installation
 
 1. Clone repository.
 2. Run composer install.
@@ -22,17 +31,19 @@ Back-end REST API e-commerce project built with Laravel.
 4. Run 'php artisan migrate'.
 5. Run 'php artisan serve'.
 
-## API endpoints
+# API endpoints
+
+## Public
 
 - POST /api/registration - User Registration
 - POST /api/login - User Authorization
 - POST /api/logout - User Log Out
 
-- GET /api/products - List of products
-- GET /api/product/{id} - Show single product
+* GET /api/products - List of products
+* GET /api/product/{id} - Show single product
 
-- POST /api/orders - Create order (Auth)
-- GET /api/orders/{id} - List of user orders
-- GET /api/admin/orders - Index all orders
-- PATCH /api/order/{id} - Change Order
-- PATCH /api/order/cancel/{id} - Cancel Order
+* POST /api/orders - Create order (Auth)
+* GET /api/orders/{id} - List of user orders
+* GET /api/admin/orders - Index all orders
+* PATCH /api/order/{id} - Change Order
+* PATCH /api/order/cancel/{id} - Cancel Order
