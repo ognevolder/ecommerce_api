@@ -28,15 +28,8 @@ class AuthService
   {
     // Create User
     $this->registration->execute($attributes);
-    // Validate User
-    $user = $this->validation->execute($attributes);
-    // Create access API-token
-    $token = $this->token->execute($user);
     // Return
-    return [
-      'user' => $user,
-      'token' => $token
-    ];
+    return $this->login($attributes);
   }
 
   /**
@@ -46,8 +39,15 @@ class AuthService
    * @param User $user
    * @return User
    */
-  public function login(array $credentials, User $user)
+  public function login(array $credentials)
   {
-    //
+    $user = $this->validation->execute($credentials);
+    // Create access API-token
+    $token = $this->token->execute($user);
+    // Return
+    return [
+      'user' => $user,
+      'token' => $token
+    ];
   }
 }

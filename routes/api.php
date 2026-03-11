@@ -8,24 +8,17 @@ use Illuminate\Support\Facades\Route;
 
 //Public
 Route::post('/registration', [AuthController::class, 'register'])->name('auth.registration');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
 
 //Auth
 Route::middleware('auth:sanctum')->group(function ()
 {
-  Route::middleware('auth:sanctum')->get('/profile', function ()
-  {
-    return response()->json([
-      'message' => 'You entered into Profile page.',
-      'status' => '200'
-    ]);
-  });
   Route::patch('/order/{id}', [OrderController::class, 'update']);
-  Route::post('/logout', [AuthController::class, 'logout']);
+  Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
   Route::post('/orders', [OrderController::class, 'store']);
-  Route::get('/orders', [OrderController::class, 'index']);
+  Route::get('/orders', [OrderController::class, 'index'])->name('user.orders');
   Route::patch('/order/cancel/{id}', [OrderController::class, 'cancel']);
 });
 
