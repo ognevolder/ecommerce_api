@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProductRequest;
+use App\DTO\CMS\InsertProductDTO;
+use App\Exceptions\ApiException;
+use App\Http\Requests\CMS\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Services\CMSService;
+use App\Support\ApiResponse;
+use Illuminate\Support\Facades\Gate;
 
-class ProductController
+class CMSController
 {
+    public function __construct(
+        private CMSService $productInsertion
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Відображення усіх елементів.
      */
     public function index()
     {
@@ -32,24 +41,24 @@ class ProductController
      */
     public function store(StoreProductRequest $request)
     {
-        // Validate
-        $data = $request->validated();
-        // Store
-        $status = Product::create($data);
-
-        if (! $status)
+        // Policy
+        if (! Gate::allows('create', Product::class))
             {
-                return response()->json([
-                    'status' => '200',
-                    'message' => 'Process failed.',
-                    'errors' => $request->messages()
-                ]);
+                throw new ApiException(message: "Only authorized Admin can insert Product.");
             }
+        // DTO
+        $dto = new InsertProductDTO(
+            attributes: $request->validated(),
+            admin_id: $request->user()->id,
+            admin_name: $request->user()->name
+            );
+        // Service
+        $product = $this->productInsertion->insert($dto);
         // Response
-        return response()->json([
-            'status' => '200',
-            'message' => "Product {{$status->title}} succsesfully created."
-        ]);
+        return ApiResponse::success(
+            message: "Product {$product->title} was successfully inserted.",
+            code: 201
+            );
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\CMS;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -34,7 +34,7 @@ class StoreProductRequest extends FormRequest
         return [
             'title.required' => 'Title field is required.',
             'title.max' => 'Title limit is reached.',
-            'title.unique' => 'Item with this value exists.',
+            'title.unique' => 'Item with this title exists.',
 
             'description.required' => 'Description field is required.',
             'description.unique' => 'Description with this value exists.',

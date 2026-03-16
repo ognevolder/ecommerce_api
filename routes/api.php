@@ -2,15 +2,19 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CMSController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-//Public
+/**
+ * Public
+ */
+
+// --- AUTH
 Route::post('/registration', [AuthController::class, 'register'])->name('auth.registration');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
-Route::get('/products', [ProductController::class, 'index']);
-Route::get('/product/{id}', [ProductController::class, 'show']);
+
 
 //Auth
 Route::middleware('auth:sanctum')->group(function ()
@@ -22,22 +26,14 @@ Route::middleware('auth:sanctum')->group(function ()
   Route::patch('/order/cancel/{id}', [OrderController::class, 'cancel']);
 });
 
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function ()
+Route::middleware(['auth:sanctum', 'cms'])->group(function ()
 {
-  // Admin Dashboard
-  Route::get('/admin', function ()
-  {
-    return response()->json([
-      'message' => 'You entered into Admin Dashboard.',
-      'status' => '200'
-    ]);
-  });
   // Create Product
-  Route::post('/products', [ProductController::class, 'store']);
+  Route::post('/products', [CMSController::class, 'store']);
   // Update Product
-  Route::patch('/product/{id}', [ProductController::class, 'store']);
+  Route::patch('/product/{id}', [CMSController::class, 'store']);
   // Delete Product
-  Route::delete('/product/{id}', [ProductController::class, 'destroy']);
+  Route::delete('/product/{id}', [CMSController::class, 'destroy']);
 
   // Get Order
   Route::get('/admin/order/{id}', [AdminController::class, 'show']);

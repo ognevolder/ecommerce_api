@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,19 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->decimal('total_price');
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->enum('status', [
-                OrderStatus::New,
-                OrderStatus::Pending,
-                OrderStatus::Fulfilled,
-                OrderStatus::Canceled
-            ])->default(OrderStatus::New);
-            $table->string('payment_status')->default('Awaiting');
+                PaymentStatus::AWAITING,
+                PaymentStatus::PAID,
+                PaymentStatus::REFUNDED
+            ])->default(PaymentStatus::AWAITING);
             $table->timestamps();
-            $table->timestamp('expires_at');
         });
     }
 
@@ -34,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('payments');
     }
 };
