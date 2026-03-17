@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Actions\CMS;
+namespace App\Domain\Product\Jobs;
 
-use App\Models\Log;
+use App\Infrastructure\Logging\Models\Log;
 
-class LogProductInsertionAction
+class LogProductInsertionJob
 {
   public function execute($event)
   {

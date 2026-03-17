@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Application\Http\Controllers;
 
-use App\DTO\CMS\InsertProductDTO;
-use App\Exceptions\ApiException;
-use App\Http\Requests\CMS\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-use App\Models\Product;
-use App\Services\CMSService;
-use App\Support\ApiResponse;
+use App\Domain\Product\DTO\InsertProductDTO;
+use App\Application\Http\Requests\CMS\StoreProductRequest;
+use App\Domain\Product\Models\Product;
+use App\Domain\Product\Services\CMSService;
+use App\Application\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Gate;
 
 class CMSController

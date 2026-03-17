@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Events\CMS;
+namespace App\Domain\Product\Events;
 
-use App\Models\Product;
+use App\Domain\Product\Models\Product;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

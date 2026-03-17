@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\Product\Enums\ProductState;
+use App\Domain\Product\Enums\ProductStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +20,17 @@ return new class extends Migration
             $table->decimal('price');
             $table->integer('stock')->default(0);
             $table->integer('reserved')->default(0);
+            $table->enum('status', [
+                ProductStatus::AVAILABLE,
+                ProductStatus::SOLD,
+                ProductStatus::BACKORDERED,
+                ProductStatus::RESERVED
+            ])->default(ProductStatus::AVAILABLE);
+            $table->enum('state', [
+                ProductState::PUBLIC,
+                ProductState::DRAFT,
+                ProductState::ARCHIVED
+            ])->default(ProductState::PUBLIC);
             $table->timestamps();
         });
     }

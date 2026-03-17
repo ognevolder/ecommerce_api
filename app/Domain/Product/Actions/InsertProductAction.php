@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Actions\CMS;
+namespace App\Domain\Product\Actions;
 
-use App\Exceptions\ApiException;
-use App\Models\Product;
+// Domain exception
+use App\Domain\Product\Models\Product;
 
 class InsertProductAction
 {

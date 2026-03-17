@@ -4,7 +4,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CMSController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /**

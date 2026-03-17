@@ -1,8 +1,6 @@
 <?php
 
-namespace App\DTO\CMS;
-
-use App\Models\User;
+namespace App\Domain\Product\DTO;
 
 class InsertProductDTO
 {
