@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Order\Models;
 
-use App\Enums\OrderStatus;
+use App\Domain\Order\Enums\OrderStatus;
+use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

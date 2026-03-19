@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\User\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use App\Enums\UserRole;
+use App\Domain\Order\Models\Order;
+use App\Domain\User\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

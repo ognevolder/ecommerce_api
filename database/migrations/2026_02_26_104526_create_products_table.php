@@ -17,20 +17,15 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->decimal('price');
-            $table->integer('stock')->default(0);
+            $table->integer('quantity')->default(1);
+            $table->decimal('price')->default(00,01);
             $table->integer('reserved')->default(0);
+            $table->integer('sold')->default(0);
             $table->enum('status', [
-                ProductStatus::AVAILABLE,
-                ProductStatus::SOLD,
-                ProductStatus::BACKORDERED,
-                ProductStatus::RESERVED
-            ])->default(ProductStatus::AVAILABLE);
-            $table->enum('state', [
-                ProductState::PUBLIC,
-                ProductState::DRAFT,
-                ProductState::ARCHIVED
-            ])->default(ProductState::PUBLIC);
+                ProductStatus::DRAFT,
+                ProductStatus::PUBLIC,
+                ProductStatus::ARCHIVED
+            ])->default(ProductStatus::DRAFT);
             $table->timestamps();
         });
     }

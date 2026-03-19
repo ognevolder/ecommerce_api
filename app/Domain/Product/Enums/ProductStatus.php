@@ -4,9 +4,8 @@ namespace App\Domain\Product\Enums;
 
 enum ProductStatus: string
 {
-  // - - - Availability.
-  case AVAILABLE = 'available'; // Available.
-  case RESERVED = 'reserved'; // Temporarily reserved.
-  case BACKORDERED = 'backordered'; // Open to pre-order.
-  case SOLD = 'sold'; // Out of stock.
+  // - - - Insertion status.
+  case DRAFT = 'draft'; // Insertion is not completed.
+  case PUBLIC = 'public'; // Publicly accessible.
+  case ARCHIVED = 'archived'; // Deleted or archived.
 }

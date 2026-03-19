@@ -1,31 +1,18 @@
 <?php
 
-namespace App\Http\Requests\CMS;
+namespace App\Application\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
             'title' => ['required', 'string', 'max:96', 'unique:products,title'],
             'description' => ['required', 'string', 'unique:products,description'],
+            'quantity' => ['required', 'int', 'min:1'],
             'price' => ['required', 'numeric', 'decimal:2', 'gt:0'],
-            'stock' => ['required', 'int', 'min:1']
         ];
     }
 
@@ -39,14 +26,14 @@ class StoreProductRequest extends FormRequest
             'description.required' => 'Description field is required.',
             'description.unique' => 'Description with this value exists.',
 
+            'quantity.required' => 'Stock field is required.',
+            'quantity.int' => 'Stock field needs to be numeric value.',
+            'quantity.min' => 'Stock needs to be greater than 0.',
+
             'price.required' => 'Price field is required.',
             'price.numeric' => 'Price field needs to be numeric value.',
             'price.decimal' => 'Only 2 decimals.',
-            'price.gt' => 'Price needs to be greater than 0.',
-
-            'stock.required' => 'Stock field is required.',
-            'stock.int' => 'Stock field needs to be numeric value.',
-            'stock.min' => 'Stock needs to be greater than 0.'
+            'price.gt' => 'Price needs to be greater than 0.'
         ];
     }
 }

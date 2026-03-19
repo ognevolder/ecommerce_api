@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Policies;
+namespace App\Domain\Product\Policies;
 
-use App\Models\User;
+use App\Domain\Product\Models\Product;
+use App\Domain\User\Models\User;
 
 class ProductPolicy
 {
-    /**
-     * Determine whether the user can create Products.
-     */
-    public function create(User $user): bool
-    {
-        return $user->isAdmin();
+    public function before(User $user, string $ability): bool|null {
+        if ($user->isAdmin()) {
+            return null;
+        }
+        return false;
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user): bool
-    {
-        return $user->isAdmin();
+    public function insert(User $user): bool {
+        return true;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user): bool
-    {
-        return $user->isAdmin();
-    }
+    // public function publish(User $user, Product $product): bool {
+    //     // State machine
+    // }
+
+    // public function edit(User $user, Product $product): bool {
+    //     // State machine
+    // }
+
+    // public function archive(User $user, Product $product): bool {
+    //     // State machine
+    // }
 }
