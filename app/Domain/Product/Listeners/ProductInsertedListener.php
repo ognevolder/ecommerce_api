@@ -2,8 +2,7 @@
 
 namespace App\Listeners\CMS;
 
-use App\Actions\CMS\LogProductInsertionAction;
-use App\Events\CMS\ProductInserted;
+use App\Domain\Product\Events\ProductInserted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -15,7 +14,6 @@ class ProductInsertedListener implements ShouldQueue
 
     public function handle(ProductInserted $event)
     {
-        $action = new LogProductInsertionAction();
-        $action->execute($event);
+        // Job
     }
 }

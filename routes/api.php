@@ -15,15 +15,25 @@ Route::prefix('/v1')->group(function () {
   Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
   // --- Product listing.
   Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-  Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+  Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 });
 
 /**
  * - - - AUTHENTICATED
  * 1. Log Out
  * 2. Insert Product
+ * 3. Archive Product
  */
 Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
-  // --- Insert Product
+  // --- Product
+  // Insert
   Route::post('/products', [ProductController::class, 'insert'])->name('products.insert');
+  // Edit
+  Route::post('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+  // Archive (status)
+  Route::patch('/products/archive/{product}', [ProductController::class, 'archive'])->name('products.archive');
+  // Publish (status)
+  Route::patch('/products/publish/{product}', [ProductController::class, 'publish'])->name('products.publish');
+  // Draft (status)
+  Route::patch('/products/draft/{product}', [ProductController::class, 'draft'])->name('products.draft');
 });

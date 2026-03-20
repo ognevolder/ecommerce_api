@@ -10,7 +10,7 @@ class LogProductInsertionJob
   {
     Log::create([
       'user_id' => $event->admin_id,
-      'type' => 'Admin CMS',
+      'type' => 'Product CMS',
       'info' => "Product {$event->product->title} was inserted by {$event->admin_name}."
     ]);
   }

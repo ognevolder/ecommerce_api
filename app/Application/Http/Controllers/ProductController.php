@@ -3,10 +3,12 @@
 namespace App\Application\Http\Controllers;
 
 use App\Application\Http\Requests\Product\StoreProductRequest;
+use App\Application\Http\Requests\UpdateProductRequest;
 use App\Domain\Product\Models\Product;
 use App\Application\Http\Responses\ApiResponse;
 use App\Application\Http\Resources\ProductResource;
 use App\Domain\Product\DTO\InsertProductDTO;
+use App\Domain\Product\DTO\UpdateProductDTO;
 use App\Domain\Product\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
@@ -43,14 +45,18 @@ class ProductController
      * Відображення моделі Product із обраним {id}. | View Product model with selected {id}.
      * @return JsonResponse
      */
-    public function show($id): JsonResponse
+    public function show(Product $product): JsonResponse
     {
-        // Видобування моделі Product із обраним {id} та статусом 'Public'. | Fetch Product model with selected {id} and status 'Public'.
-        $product = Product::where('id', $id)->where('status', 'public')->first();
         // Повернення JSON-відповіді. | Return JSON-response
-        return ApiResponse::success(new ProductResource($product), "Product model with selected {id}.");
+        return ApiResponse::success(new ProductResource($product), "Product model with selected ID: {$product->id}.");
     }
 
+    /**
+     * Внесення Product у таблицю. | Product insertion.
+     *
+     * @param StoreProductRequest $request
+     * @return JsonResponse
+     */
     public function insert(StoreProductRequest $request): JsonResponse
     {
         // Policy
@@ -71,76 +77,63 @@ class ProductController
             );
     }
 
+    public function archive(Product $product): JsonResponse
+    {
+        // Policy
+        Gate::authorize('archive', $product);
+        // Service
+        $result = $this->service->archive($product);
+        if (! $result) {
+            return ApiResponse::error(
+                message: "Product archivation failed.",
+                code: 422
+            );
+        }
+        // Response
+        return ApiResponse::success(
+            data: new ProductResource($product),
+            message: "Product {$product->title} was successfully archived.",
+            code: 200
+            );
+    }
+
     /**
      * Публікація моделі Product. | Product model publishment.
      *
      * @param StoreProductRequest $request
      * @return JsonResponse
      */
-    // public function store(StoreProductRequest $request): JsonResponse
+    // public function publish(Product $product): JsonResponse
     // {
 
     // }
 
 
     /**
-     * Update the specified resource in storage.
+     * Редагування Product за обраним {id}. | Update Product model with selected {id}.
+     *
+     * @param UpdateProductRequest $request
+     * @param Product $product
+     * @return JsonResponse
      */
-    // public function update(UpdateProductRequest $request, $id)
-    // {
-    //     //Fetch
-    //     $item = Product::where('id', $id)->first();
-    //     //Validate
-    //     $data = $request->validated();
-    //     //Update
-    //     if (! $item)
-    //         {
-    //             return response()->json([
-    //                 'status' => '200',
-    //                 'message' => 'Process failed. Item is not exist.'
-    //             ]);
-    //         }
-
-    //     $status = $item->update($data);
-    //     //Response
-    //     if (! $status)
-    //         {
-    //             return response()->json([
-    //                 'status' => '200',
-    //                 'message' => 'Process failed.',
-    //                 'errors' => $request->messages()
-    //             ]);
-    //         }
-
-    //     return response()->json([
-    //         'status' => '200',
-    //         'message' => "Product {{$status->title}} succsesfully updated."
-    //     ]);
-    // }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    // public function destroy($id)
-    // {
-    //     $item = Product::where('id', $id)->first();
-
-    //     if (! $item)
-    //         {
-    //             return response()->json([
-    //                 'status' => '200',
-    //                 'message' => 'Process failed. Item is not exist.'
-    //             ]);
-    //         }
-
-    //     $status = $item->delete();
-
-    //     if ($status)
-    //         {
-    //             return response()->json([
-    //                 'status' => '200',
-    //                 'message' => "Product {{$item->title}} succsesfully deleted."
-    //             ]);
-    //         }
-    // }
+    public function update(UpdateProductRequest $request, int $product): JsonResponse
+    {
+        // Policy
+        Gate::authorize('update', $product);
+        // DTO
+        $dto = new UpdateProductDTO(
+            attributes: $request->validated(),
+            admin_id: $request->user()->id,
+            admin_name: $request->user()->name,
+            product_id: $id
+            );
+        // Service
+        $product = $this->service->update($dto);
+        // Response
+        return ApiResponse::success(
+            data: new ProductResource($product),
+            message: "Product {$product->title} was successfully updated.",
+            code: 200
+            );
+    }
 }

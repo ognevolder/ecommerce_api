@@ -7,26 +7,24 @@ use App\Domain\User\Models\User;
 
 class ProductPolicy
 {
-    public function before(User $user, string $ability): bool|null {
-        if ($user->isAdmin()) {
-            return null;
-        }
-        return false;
-    }
-
+    // --- Внесення Product в таблицю. | Product insertion.
     public function insert(User $user): bool {
-        return true;
+        return $user->isAdmin();
     }
-
-    // public function publish(User $user, Product $product): bool {
-    //     // State machine
-    // }
-
-    // public function edit(User $user, Product $product): bool {
-    //     // State machine
-    // }
-
-    // public function archive(User $user, Product $product): bool {
-    //     // State machine
-    // }
+    // --- Редагування Product. | Product editing.
+    public function update(User $user, Product $product): bool {
+        return $user->isAdmin();
+    }
+    // --- Зміна статусу на 'Public'. | Status update to 'Public'.
+    public function publish(User $user, Product $product): bool {
+        return $user->isAdmin();
+    }
+    // --- Зміна статусу на 'Draft'. | Status update to 'Draft'.
+    public function draft(User $user, Product $product): bool {
+        return $user->isAdmin();
+    }
+    // --- Зміна статусу на 'Archived'. | Status update to 'Archived'.
+    public function archive(User $user, Product $product): bool {
+        return $user->isAdmin();
+    }
 }

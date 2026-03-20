@@ -14,9 +14,6 @@ class ProductInserted
     public $admin_id;
     public $admin_name;
 
-    /**
-     * Create a new event instance.
-     */
     public function __construct(Product $product, int $admin_id, string $admin_name)
     {
         $this->product = $product;

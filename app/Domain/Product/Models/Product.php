@@ -3,6 +3,7 @@
 namespace App\Domain\Product\Models;
 
 use App\Domain\Product\Enums\ProductStatus;
+use App\Domain\Product\StateMachines\ProductStateMachine;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,10 @@ class Product extends Model
     protected static function newFactory(): Factory
     {
         return ProductFactory::new();
+    }
+    // --- State machine.
+    public function stateMachine(): ProductStateMachine {
+        return new ProductStateMachine($this);
     }
 
     // Availability on stock.
