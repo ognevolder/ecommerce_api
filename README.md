@@ -1,12 +1,6 @@
-<p align="center">
-  <a href="https://ognevolder.pro" target="_blank">
-    <img src="/resources/ognevolder.svg" width="400" alt="Ognevolder Logo"></img>
-  </a>
-</p>
-
 # Ecommerce API project
 
-Back-end REST API e-commerce project built with Laravel. Contains basic CMS.
+Back-end REST API e-commerce project built with Laravel.
 
 # Tech Stack
 
