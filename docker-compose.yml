@@ -1,0 +1,97 @@
+services:
+  # Nginx
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html:delegated
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - ecommerce
+
+  # PHP-FPM
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html:delegated
+    networks:
+      - ecommerce
+
+  # PHP Queue Worker
+  php-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      - php
+      - mysql
+      - redis
+    command:
+      [
+        "php",
+        "/var/www/html/artisan",
+        "queue:work",
+        "--queue=default,low",
+        "--tries=3",
+      ]
+    networks:
+      - ecommerce
+    restart: always
+
+  # MySQL Database
+  mysql:
+    image: mysql:9.6
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecommerce_db
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - ecommerce
+
+  # DB Dashboard (phpMyAdmin)
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      ALLOW_ARBITRARY_SERVER: 1
+    depends_on:
+      - mysql
+    networks:
+      - ecommerce
+
+  # Redis (Queues & Cache)
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce
+
+  # Mailpit (SMTP)
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - ecommerce
+
+networks:
+  ecommerce:
+    driver: bridge
+
+volumes:
+  db_data:

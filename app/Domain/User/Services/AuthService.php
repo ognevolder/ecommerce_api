@@ -1,53 +1,102 @@
 <?php
 
-namespace App\Services;
+namespace App\Domain\User\Services;
 
-use App\Actions\Auth\TokenCreationAction;
-use App\Actions\Auth\UserValidationAction;
-use App\Actions\Auth\UserRegistrationAction;
-use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Support\ApiResponse;
-use Illuminate\Support\Facades\Auth;
+use App\Domain\User\DTO\UserLoginDTO;
+use App\Domain\User\DTO\UserRegistrationDTO;
+use App\Domain\User\Events\UserRegistrationEvent;
+use App\Domain\User\Exceptions\InvalidCredentialsException;
+use App\Domain\User\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 
+/**
+ *  --- User Registration/Authentication Service.
+ * 1. State machine: bool|DomainException.
+ * 2. Action: User|DomainException.
+ * 3. Event: Event.
+ * 4. Return: ProductResource.
+ */
 class AuthService
 {
-  public function __construct(
-    private UserValidationAction $validation,
-    private TokenCreationAction $token,
-    private UserRegistrationAction $registration
-  ) {}
-
   /**
-   * Create User
+   * User registration.
    *
-   * @param array $attributes
+   * @param UserRegistrationDTO $dto
    * @return User
    */
-  public function register(array $attributes)
+  public function register(UserRegistrationDTO $dto): User
   {
-    // Create User
-    $this->registration->execute($attributes);
-    // Return
-    return $this->login($attributes);
+    // --- Action.
+    $user = User::create([
+      'name' => $dto->name,
+      'email' => $dto->email,
+      'password' => $dto->password
+    ])->fresh();
+    // --- Event.
+    event(new UserRegistrationEvent($user));
+    // --- Return.
+    return $user;
   }
 
   /**
-   * Login user
+   * User authentication.
    *
-   * @param array $credentials
-   * @param User $user
-   * @return User
+   * @param UserLoginDTO $dto
+   * @return array
    */
-  public function login(array $credentials)
+  public function login(UserLoginDTO $dto): array
   {
-    $user = $this->validation->execute($credentials);
-    // Create access API-token
-    $token = $this->token->execute($user);
-    // Return
+    // --- Action.
+    $credentials = [
+      'email' => $dto->email,
+      'password' => $dto->password
+      ];
+
+    // Fetch user: User
+    $user = User::where('email', $credentials['email'])->first();
+
+    // Authentication attempt: bool|InvalidCredentials Domain Exception
+    if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+      throw new InvalidCredentialsException();
+    }
+
+    // Create token: string
+    $user->tokens()->delete();
+    $role = $user->role;
+    $timestamp = Carbon::now()->addMinutes(180);
+    $token = $user->createToken('auth_token', [$role], $timestamp)->plainTextToken;
+    // --- Event.
+    // --- Return.
     return [
-      'user' => $user,
+      'user' => $user->fresh(),
       'token' => $token
     ];
+  }
+
+  /**
+   * User logout on current source.
+   *
+   * @param $user
+   * @return void
+   */
+  public function logout($user): void
+  {
+    // --- Action.
+    $user->currentAccessToken()->delete();
+    // --- Event.
+  }
+
+  /**
+   * Terminate access on all sources.
+   *
+   * @param $user
+   * @return void
+   */
+  public function terminate($user): void
+  {
+    // --- Action.
+    $user->tokens()->delete();
+    // --- Event.
   }
 }

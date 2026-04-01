@@ -12,7 +12,13 @@ use App\Domain\Product\DTO\UpdateProductDTO;
 use App\Domain\Product\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
-
+/**
+ *  --- Product Controller.
+ * 1. Policy: bool|AuthorizationException.
+ * 2. Request: DTO.
+ * 3. Service: Product.
+ * 4. Response: JSON.
+ */
 class ProductController
 {
     public function __construct(
@@ -25,19 +31,9 @@ class ProductController
      */
     public function index(): JsonResponse
     {
-        // Видобування всіх моделей Product із статусом 'Public'. | Fetch all Product models with status 'Public'.
-        $products = Product::where('status', 'public')->paginate(16);
-        // Колекція ProductResource із сторінками. | Paginated ProductResource Collection.
-        $collection = [
-            'items' => ProductResource::collection($products),
-            'pagination' => [
-                'total' => $products->total(),
-                'per_page' => $products->perPage(),
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-            ]
-        ];
-        // Повернення JSON-відповіді. | Return JSON-response
+        // Service
+        $collection = $this->service->index();
+        // JSON-response
         return ApiResponse::success($collection, "List of all Product models with status 'Public'.");
     }
 
@@ -47,7 +43,7 @@ class ProductController
      */
     public function show(Product $product): JsonResponse
     {
-        // Повернення JSON-відповіді. | Return JSON-response
+        // JSON-response
         return ApiResponse::success(new ProductResource($product), "Product model with selected ID: {$product->id}.");
     }
 
@@ -77,25 +73,25 @@ class ProductController
             );
     }
 
-    public function archive(Product $product): JsonResponse
-    {
-        // Policy
-        Gate::authorize('archive', $product);
-        // Service
-        $result = $this->service->archive($product);
-        if (! $result) {
-            return ApiResponse::error(
-                message: "Product archivation failed.",
-                code: 422
-            );
-        }
-        // Response
-        return ApiResponse::success(
-            data: new ProductResource($product),
-            message: "Product {$product->title} was successfully archived.",
-            code: 200
-            );
-    }
+    // public function archive(Product $product): JsonResponse
+    // {
+    //     // Policy
+    //     Gate::authorize('archive', $product);
+    //     // Service
+    //     $result = $this->service->archive($product);
+    //     if (! $result) {
+    //         return ApiResponse::error(
+    //             message: "Product archivation failed.",
+    //             code: 422
+    //         );
+    //     }
+    //     // Response
+    //     return ApiResponse::success(
+    //         data: new ProductResource($product),
+    //         message: "Product {$product->title} was successfully archived.",
+    //         code: 200
+    //         );
+    // }
 
     /**
      * Публікація моделі Product. | Product model publishment.
@@ -116,24 +112,24 @@ class ProductController
      * @param Product $product
      * @return JsonResponse
      */
-    public function update(UpdateProductRequest $request, int $product): JsonResponse
-    {
-        // Policy
-        Gate::authorize('update', $product);
-        // DTO
-        $dto = new UpdateProductDTO(
-            attributes: $request->validated(),
-            admin_id: $request->user()->id,
-            admin_name: $request->user()->name,
-            product_id: $id
-            );
-        // Service
-        $product = $this->service->update($dto);
-        // Response
-        return ApiResponse::success(
-            data: new ProductResource($product),
-            message: "Product {$product->title} was successfully updated.",
-            code: 200
-            );
-    }
+    // public function update(UpdateProductRequest $request, int $product): JsonResponse
+    // {
+    //     // Policy
+    //     Gate::authorize('update', $product);
+    //     // DTO
+    //     $dto = new UpdateProductDTO(
+    //         attributes: $request->validated(),
+    //         admin_id: $request->user()->id,
+    //         admin_name: $request->user()->name,
+    //         product_id: $id
+    //         );
+    //     // Service
+    //     $product = $this->service->update($dto);
+    //     // Response
+    //     return ApiResponse::success(
+    //         data: new ProductResource($product),
+    //         message: "Product {$product->title} was successfully updated.",
+    //         code: 200
+    //         );
+    // }
 }

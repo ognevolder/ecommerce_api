@@ -1,24 +1,18 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
+  public function toArray(Request $request): array
     {
-        return [
-            'id' => $this['user']->id,
-            'name' => $this['user']->name,
-            'role' => $this['user']->role,
-            'token' => $this['token']
+      return [
+        'id' => $this->id,
+        'name' => $this->name,
+        'role' => $this->role->value
         ];
     }
 }

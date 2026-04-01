@@ -2,38 +2,110 @@
 
 namespace App\Application\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegistrationRequest;
-use App\Http\Resources\UserResource;
-use App\Services\AuthService;
-use App\Support\ApiResponse;
+use App\Application\Http\Requests\Auth\LoginRequest;
+use App\Application\Http\Requests\Auth\RegistrationRequest;
+use App\Application\Http\Resources\UserResource;
+use App\Application\Http\Responses\ApiResponse;
+use App\Domain\User\DTO\UserLoginDTO;
+use App\Domain\User\Services\AuthService;
+use App\Domain\User\DTO\UserRegistrationDTO;
+use App\Domain\User\Exceptions\InvalidCredentialsException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ *  --- User Registration/Authentication Controller.
+ * 1. Policy: bool|AuthorizationException.
+ * 2. Request: DTO.
+ * 3. Service: User.
+ * 4. Response: JSON.
+ */
 class AuthController
 {
-    public function __construct(private AuthService $service)
-    {}
+  public function __construct(private AuthService $service) {}
 
-    public function register(RegistrationRequest $request)
-    {
-        // Create User
-        $user = $this->service->register($request->validated());
-        // Response
-        return ApiResponse::success(new UserResource($user), 'Реєстрація успішна!', 201);
+  /**
+   * User registration flow.
+   *
+   * @param RegistrationRequest $request
+   * @return JsonResponse
+   */
+  public function register(RegistrationRequest $request): JsonResponse
+  {
+    // --- DTO.
+    $attributes = $request->validated();
+    $dto = new UserRegistrationDTO(
+      name: $attributes['name'],
+      email: $attributes['email'],
+      password: $attributes['password']
+    );
+
+    // --- Service.
+    $user = $this->service->register($dto);
+
+    // --- Response.
+    return ApiResponse::success(
+      data: new UserResource($user),
+      message: 'Successful registration!',
+      code: 201
+      );
+  }
+
+  /**
+   * User authentication flow.
+   *
+   * @param LoginRequest $request
+   * @return JsonResponse
+   */
+  public function login(LoginRequest $request): JsonResponse
+  {
+    // --- DTO.
+    $credentials = $request->validated();
+    $dto = new UserLoginDTO(
+      email: $credentials['email'],
+      password: $credentials['password']
+    );
+
+    // --- Service.
+    try {
+      $response = $this->service->login($dto);
+    } catch (InvalidCredentialsException $e) {
+      return ApiResponse::error(
+        message: $e->getMessage(),
+        code: 422
+        );
     }
 
-    public function login(LoginRequest $request): JsonResponse
-    {
-        // Login
-        $user = $this->service->login($request->validated());
-        // Response
-        return ApiResponse::success(new UserResource($user), 'Авторизація успішна!', 200);
-    }
+    // --- Response.
+    return ApiResponse::success(
+      data: [
+        'user' => new UserResource($response['user']),
+        'token' => $response['token']
+      ],
+      message: "Successful authentication!",
+      code: 200
+      );
+  }
 
-    public function logout(Request $request): JsonResponse
-    {
-        $request->user()->currentAccessToken()->delete();
-        return ApiResponse::success(message: 'Вихід із системи.', code: 200);
-    }
+  public function logout(Request $request): JsonResponse
+  {
+    // --- Service.
+    $this->service->logout($request->user());
+    // --- Response.
+    return ApiResponse::success(
+      message: 'Logged out.',
+      code: 200
+      );
+  }
+
+  public function terminate(Request $request): JsonResponse
+  {
+    // --- Service.
+    $this->service->terminate($request->user());
+    // --- Response.
+    return ApiResponse::success(
+      message: 'Access terminated on all resources.',
+      code: 200
+      );
+  }
 }

@@ -1,0 +1,27 @@
+# Dependencies
+/vendor
+/node_modules
+
+# Environments and Secrets
+.env
+.env.backup
+*.key
+
+# Git and IDE
+.git
+.gitignore
+.vscode
+.DS_Store
+
+# Laravel specific
+/storage/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*.php
+/bootstrap/cache/*
+.phpunit.result.cache
+
+# Docker files
+Dockerfile
+docker-compose.yml
+docker/
