@@ -17,11 +17,7 @@ return new class extends Migration
             $table->decimal('price')->default(00,01);
             $table->integer('reserved')->default(0);
             $table->integer('sold')->default(0);
-            $table->enum('status', [
-                ProductStatus::DRAFT,
-                ProductStatus::PUBLIC,
-                ProductStatus::ARCHIVED
-            ])->default(ProductStatus::PUBLIC);
+            $table->enum('status', ProductStatus::cases())->default(ProductStatus::DRAFT);
             $table->timestamps();
         });
     }

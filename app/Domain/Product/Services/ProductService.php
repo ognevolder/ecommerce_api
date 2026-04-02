@@ -17,12 +17,17 @@ use App\Domain\Product\Models\Product;
  */
 class ProductService
 {
+  /**
+   * Index all Product models.
+   *
+   * @return array
+   */
   public function index(): array
   {
     // --- Action.
     // Fetch all Product models with status 'Public'.
     $products = Product::where('status', 'public')->paginate(16);
-    // Колекція ProductResource із сторінками. | Paginated ProductResource Collection.
+    // Paginated ProductResource Collection.
     $collection = [
       'items' => ProductResource::collection($products),
       'pagination' => [
@@ -35,10 +40,37 @@ class ProductService
     // --- Return.
     return $collection;
   }
+
+  /**
+   * Show Product model with selected ID.
+   *
+   * @param int $id
+   * @return Product
+   */
+  public function show(int $id): Product
+  {
+    // --- Action.
+    $product = Product::where('id', $id)->first();
+
+    // --- Return.
+    return $product;
+  }
+
+  /**
+   * Insert Product model.
+   *
+   * @param InsertProductDTO $dto
+   * @return Product
+   */
   public function insert(InsertProductDTO $dto): Product
   {
-    // Action
-    $result = Product::create($dto->attributes);
+    // --- Action.
+    $product = Product::create([
+      'title' => $dto->title,
+      'description' => $dto->description,
+      'quantity' => $dto->quantity,
+      'price' => $dto->price
+    ]);
     // Event
     event(new ProductInserted(
       product: $result,

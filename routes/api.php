@@ -1,5 +1,6 @@
 <?php
 
+use App\Application\Http\Controllers\AdminController;
 use App\Application\Http\Controllers\AuthController;
 use App\Application\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -17,19 +18,25 @@ Route::prefix('/v1')->group(function () {
   });
   // --- Product.
   Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-  Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+  Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 });
 
 /**
  * - - - AUTHENTICATED
  * 1. Authentication: Logout, Terminate.
- * 2. Product: Insert, Update, Archive, Publish, Draft.
+ * 2. Admin (Product CMS): Insert, Update, Archive, Publish, Draft.
  */
 Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
   // --- Authentication.
   Route::post('/me/logout', [AuthController::class, 'logout'])->name('auth.logout');
   Route::post('/me/terminate', [AuthController::class, 'terminate'])->name('auth.terminate');
-  // --- Product
+
+  // --- Admin.
+  Route::prefix('/admin/products')->name('admin.products.')->group(function () {
+    Route::get('/list', [AdminController::class, 'list'])->name('list');
+    Route::get('/{id}', [AdminController::class, 'show'])->name('show');
+  });
+
   // Insert
   Route::post('/products', [ProductController::class, 'insert'])->name('products.insert');
   // Edit

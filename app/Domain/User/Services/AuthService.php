@@ -4,6 +4,8 @@ namespace App\Domain\User\Services;
 
 use App\Domain\User\DTO\UserLoginDTO;
 use App\Domain\User\DTO\UserRegistrationDTO;
+use App\Domain\User\Events\UserLoginEvent;
+use App\Domain\User\Events\UserLogoutEvent;
 use App\Domain\User\Events\UserRegistrationEvent;
 use App\Domain\User\Exceptions\InvalidCredentialsException;
 use App\Domain\User\Models\User;
@@ -47,26 +49,26 @@ class AuthService
    */
   public function login(UserLoginDTO $dto): array
   {
-    // --- Action.
     $credentials = [
       'email' => $dto->email,
       'password' => $dto->password
       ];
-
+    // --- Action.
     // Fetch user: User
     $user = User::where('email', $credentials['email'])->first();
-
     // Authentication attempt: bool|InvalidCredentials Domain Exception
     if (! $user || ! Hash::check($credentials['password'], $user->password)) {
       throw new InvalidCredentialsException();
     }
-
     // Create token: string
     $user->tokens()->delete();
     $role = $user->role;
     $timestamp = Carbon::now()->addMinutes(180);
     $token = $user->createToken('auth_token', [$role], $timestamp)->plainTextToken;
+
     // --- Event.
+  event(new UserLoginEvent($user));
+
     // --- Return.
     return [
       'user' => $user->fresh(),
@@ -84,7 +86,9 @@ class AuthService
   {
     // --- Action.
     $user->currentAccessToken()->delete();
+
     // --- Event.
+    event(new UserLogoutEvent($user));
   }
 
   /**
@@ -97,6 +101,8 @@ class AuthService
   {
     // --- Action.
     $user->tokens()->delete();
+
     // --- Event.
+    event(new UserLogoutEvent($user));
   }
 }

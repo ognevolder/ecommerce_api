@@ -4,7 +4,7 @@ namespace App\Domain\User\Events;
 
 use App\Domain\User\Shared\AuthenticationEvent;
 
-class UserRegistrationEvent extends AuthenticationEvent
+class UserLoginEvent extends AuthenticationEvent
 {
   //
 }

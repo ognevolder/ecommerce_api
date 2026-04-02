@@ -1,46 +1,54 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Application\Http\Controllers;
 
-use App\Http\Resources\OrderItemResource;
-use App\Http\Resources\OrderResource;
-use App\Models\Order;
-use App\Services\OrderService;
-use App\Support\ApiResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Application\Http\Resources\ProductResource;
+use App\Application\Http\Responses\ApiResponse;
+use App\Domain\Product\Models\Product;
+use App\Domain\Product\Services\AdminService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
+/**
+ *  --- Admin (CMS) Controller.
+ * 1. Policy: bool|AuthorizationException.
+ * 2. Request: DTO.
+ * 3. Service: Product.
+ * 4. Response: JSON.
+ */
 class AdminController
 {
-    public function __construct(
-        private OrderService $service
-    ) {}
+  public function __construct(private AdminService $service) {}
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
-    {
-        $orders = Order::with('items.product')->paginate(10);
+  public function list(): JsonResponse
+  {
+    // --- Policy.
+    Gate::authorize('list', Product::class);
 
-        return ApiResponse::success(OrderResource::collection($orders));
-    }
+    // --- Service.
+    $collection = $this->service->list();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        $order = Order::with('items.product')->find($id);
-        return ApiResponse::success(new OrderResource($order));
-    }
+    // --- Response.
+    return ApiResponse::success(
+      data: $collection,
+      message: "Products list.",
+      code: 200
+    );
+  }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function fulfill(int $id)
-    {
-        $order = $this->service->fulfill($id);
-        return ApiResponse::success(new OrderResource($order), 'Замовлення успішно опрацьоване.');
-    }
+  public function show(int $id): JsonResponse
+  {
+    // --- Policy.
+    Gate::authorize('show', Product::class);
+
+    // --- Service.
+    $product = $this->service->show($id);
+
+    // --- Response.
+    return ApiResponse::success(
+      data: new ProductResource($product),
+      message: "Product with selected ID.",
+      code: 200
+    );
+  }
 }

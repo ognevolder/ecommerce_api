@@ -2,7 +2,7 @@
 
 namespace App\Application\Http\Controllers;
 
-use App\Application\Http\Requests\Product\StoreProductRequest;
+use App\Application\Http\Requests\Product\StoreRequest;
 use App\Application\Http\Requests\UpdateProductRequest;
 use App\Domain\Product\Models\Product;
 use App\Application\Http\Responses\ApiResponse;
@@ -26,46 +26,57 @@ class ProductController
     ) {}
 
     /**
-     * Відображення усіх моделей Product. | View all Product models.
+     * Index all Product models.
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
-        // Service
+        // --- Service.
         $collection = $this->service->index();
-        // JSON-response
+
+        // --- Response.
         return ApiResponse::success($collection, "List of all Product models with status 'Public'.");
     }
 
     /**
-     * Відображення моделі Product із обраним {id}. | View Product model with selected {id}.
+     * Show Product model with selected {id}.
      * @return JsonResponse
      */
-    public function show(Product $product): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        // JSON-response
+        // --- Service.
+        $product = $this->service->show($id);
+
+        // --- Response.
         return ApiResponse::success(new ProductResource($product), "Product model with selected ID: {$product->id}.");
     }
 
     /**
-     * Внесення Product у таблицю. | Product insertion.
+     * Product insertion.
      *
-     * @param StoreProductRequest $request
+     * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function insert(StoreProductRequest $request): JsonResponse
+    public function insert(StoreRequest $request): JsonResponse
     {
-        // Policy
+        $attributes = $request->validated();
+
+        // --- Policy.
         Gate::authorize('insert', Product::class);
-        // DTO
+
+        // --- DTO.
         $dto = new InsertProductDTO(
-            attributes: $request->validated(),
-            admin_id: $request->user()->id,
-            admin_name: $request->user()->name
+            title: $attributes->title,
+            description: $attributes->description,
+            quantity: $attributes->quantity,
+            price: $attributes->price,
+            admin_id: $request->user()->id
             );
-        // Service
+
+        // --- Service.
         $product = $this->service->insert($dto);
-        // Response
+
+        // --- Response.
         return ApiResponse::success(
             data: new ProductResource($product),
             message: "Product {$product->title} was successfully inserted.",

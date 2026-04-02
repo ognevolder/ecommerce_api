@@ -5,8 +5,10 @@ namespace App\Domain\Product\DTO;
 class InsertProductDTO
 {
   public function __construct(
-    public array $attributes,
-    public int $admin_id,
-    public string $admin_name
+    public string $title,
+    public string $description,
+    public int $quantity,
+    public float $price,
+    public int $admin_id
   ) {}
 }

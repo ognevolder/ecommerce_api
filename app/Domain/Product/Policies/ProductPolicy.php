@@ -7,10 +7,18 @@ use App\Domain\User\Models\User;
 
 class ProductPolicy
 {
-    public function before(User $user, string $ability): bool|null
-    {
-        return $user->isAdmin() ? true : null;
-    }
+  public function before(User $user, string $ability): bool
+  {
+    return $user->isAdmin() ? true : null;
+  }
 
-    public function
+  public function list(User $user, Product $product): bool
+  {
+    return true;
+  }
+
+  public function show(User $user, Product $product): bool
+  {
+    return true;
+  }
 }

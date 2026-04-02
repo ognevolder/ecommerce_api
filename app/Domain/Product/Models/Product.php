@@ -8,10 +8,11 @@ use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Queue\SerializesModels;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SerializesModels;
 
     protected $fillable = ['title', 'description', 'quantity', 'price', 'status'];
     protected $casts = ['status' => ProductStatus::class];
