@@ -56,30 +56,7 @@ class ProductService
     return $product;
   }
 
-  /**
-   * Insert Product model.
-   *
-   * @param InsertProductDTO $dto
-   * @return Product
-   */
-  public function insert(InsertProductDTO $dto): Product
-  {
-    // --- Action.
-    $product = Product::create([
-      'title' => $dto->title,
-      'description' => $dto->description,
-      'quantity' => $dto->quantity,
-      'price' => $dto->price
-    ]);
-    // Event
-    event(new ProductInserted(
-      product: $result,
-      admin_id: $dto->admin_id,
-      admin_name: $dto->admin_name
-    ));
-    // Return
-    return $result;
-  }
+
 
   public function update(UpdateProductDTO $dto): Product
   {

@@ -2,8 +2,11 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Requests\Product\StoreProductRequest;
 use App\Application\Http\Resources\ProductResource;
 use App\Application\Http\Responses\ApiResponse;
+use App\Domain\Product\DTO\InsertProductDTO;
+use App\Domain\Product\Exceptions\InvalidAttributesException;
 use App\Domain\Product\Models\Product;
 use App\Domain\Product\Services\AdminService;
 use Illuminate\Http\JsonResponse;
@@ -49,6 +52,40 @@ class AdminController
       data: new ProductResource($product),
       message: "Product with selected ID.",
       code: 200
+    );
+  }
+
+  public function insert(StoreProductRequest $request): JsonResponse
+  {
+    $attributes = $request->validated();
+
+    // --- Policy.
+    Gate::authorize('insert', Product::class);
+
+    // --- DTO.
+    $dto = new InsertProductDTO(
+      title: $attributes['title'],
+      description: $attributes['description'],
+      quantity: $attributes['quantity'],
+      price: $attributes['price'],
+      admin_id: $request->user()->id
+    );
+
+    // --- Service.
+    try {
+      $insertion = $this->service->insert($dto);
+    } catch (InvalidAttributesException $e) {
+      return ApiResponse::error(
+        message: $e->getMessage(),
+        code: 422
+      );
+    }
+
+    // --- Response.
+    return ApiResponse::success(
+      data: new ProductResource($insertion),
+      message: "Product {$attributes->title} successfuly inserted.",
+      code: 201
     );
   }
 }

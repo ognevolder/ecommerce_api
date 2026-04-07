@@ -4,7 +4,7 @@ namespace App\Application\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class StoreProductRequest extends FormRequest
 {
   public function rules(): array
   {
@@ -12,8 +12,7 @@ class StoreRequest extends FormRequest
       'title' => ['required', 'string', 'max:96', 'unique:products,title'],
       'description' => ['required', 'string', 'unique:products,description'],
       'quantity' => ['required', 'int', 'min:1'],
-      'price' => ['required', 'numeric', 'decimal:2', 'gt:0'],
-      'status' => ['required']
+      'price' => ['required', 'numeric', 'decimal:2', 'gt:0']
     ];
   }
 

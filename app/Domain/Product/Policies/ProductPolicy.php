@@ -21,4 +21,9 @@ class ProductPolicy
   {
     return true;
   }
+
+  public function insert(User $user, Product $product): bool
+  {
+    return true;
+  }
 }

@@ -14,14 +14,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->decimal('total_price');
-            $table->enum('status', [
-                OrderStatus::New,
-                OrderStatus::Pending,
-                OrderStatus::Fulfilled,
-                OrderStatus::Canceled
-            ])->default(OrderStatus::New);
+            $table->string('currency');
+            $table->enum('status', OrderStatus::cases())->default(OrderStatus::NEW);
             $table->string('payment_status')->default('Awaiting');
             $table->timestamps();
             $table->timestamp('expires_at');

@@ -2,6 +2,8 @@
 
 namespace App\Application\Providers;
 
+use App\Domain\Product\Events\ProductInsertionEvent;
+use App\Domain\Product\Listeners\ProductInsertionListener;
 use App\Domain\User\Events\UserLoginEvent;
 use App\Domain\User\Events\UserLogoutEvent;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -15,6 +17,7 @@ class EventServiceProvider extends ServiceProvider
   protected $listen = [
     UserRegistrationEvent::class => [UserRegistrationListener::class],
     UserLoginEvent::class => [UserLoginListener::class],
-    UserLogoutEvent::class => [UserLogoutListener::class]
+    UserLogoutEvent::class => [UserLogoutListener::class],
+    ProductInsertionEvent::class => [ProductInsertionListener::class]
   ];
 }

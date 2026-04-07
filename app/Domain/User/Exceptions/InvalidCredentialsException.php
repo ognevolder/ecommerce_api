@@ -3,7 +3,6 @@
 namespace App\Domain\User\Exceptions;
 
 use App\Domain\User\Shared\UserDomainException;
-use Throwable;
 
 class InvalidCredentialsException extends UserDomainException
 {

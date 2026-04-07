@@ -8,4 +8,6 @@ enum Action: string
   case LOGIN = 'login';
   case LOGOUT = 'logout';
   case TERMINATION = 'termination';
+
+  case INSERTION = 'insertion';
 }

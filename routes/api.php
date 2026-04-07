@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
   Route::prefix('/admin/products')->name('admin.products.')->group(function () {
     Route::get('/list', [AdminController::class, 'list'])->name('list');
     Route::get('/{id}', [AdminController::class, 'show'])->name('show');
+    Route::post('/insert', [AdminController::class, 'insert'])->name('insert');
   });
 
   // Insert
