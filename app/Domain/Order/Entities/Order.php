@@ -9,11 +9,11 @@ use DateTimeImmutable;
 class Order
 {
   public function __construct(
-    private int $id,
-    private int $customerId,
-    private OrderStatus $status,
-    private Money $total,
-    private DateTimeImmutable $expiresAt
+    private readonly ?int $id,
+    private readonly int $customerId,
+    private readonly OrderStatus $status,
+    private readonly Money $total,
+    private readonly DateTimeImmutable $expiresAt
   ) {}
 
   public function id(): int
@@ -21,7 +21,7 @@ class Order
     return $this->id;
   }
 
-  public function customerId(): int
+  public function customerId(): ?int
   {
     return $this->customerId;
   }

@@ -14,7 +14,7 @@ return new class extends Migration
       $table->string('title');
       $table->text('description');
       $table->integer('quantity')->default(1);
-      $table->decimal('price')->default(00,01);
+      $table->integer('price')->default(1);
       $table->integer('reserved')->default(0);
       $table->enum('status', ProductStatus::cases())->default(ProductStatus::DRAFT);
       $table->timestamps();

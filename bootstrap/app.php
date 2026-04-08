@@ -21,6 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withProviders([
-        App\Application\Providers\EventServiceProvider::class,
+        //
     ])
     ->create();
