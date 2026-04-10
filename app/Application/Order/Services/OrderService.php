@@ -19,7 +19,7 @@ class OrderService
       customerId: $dto->customerId,
       status: OrderStatus::NEW,
       total: new Money(array_sum(array_column($dto->items, 'price'))),
-      expiresAt: now()->addMinutes(15)->toDateTimeImmutable()
+      expiresAt: new \DateTimeImmutable('+15 minutes')
     );
 
     $this->repo->save($entity);

@@ -11,8 +11,8 @@ return new class extends Migration
   {
     Schema::create('orders', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-      $table->decimal('total');
+      $table->foreignId('customer_id')->constrained()->noActionOnDelete();
+      $table->int('total');
       $table->enum('status', OrderStatus::cases())->default(OrderStatus::NEW);
       $table->timestamps();
       $table->timestamp('expires_at');

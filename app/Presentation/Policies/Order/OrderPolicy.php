@@ -4,6 +4,7 @@ namespace App\Presentation\Policies;
 
 use App\Domain\Order\Entities\Order;
 use App\Domain\Order\Enums\OrderStatus;
+use App\Domain\User\Models\User;
 
 class OrderPolicy
 {
@@ -17,9 +18,9 @@ class OrderPolicy
     return $user->id === $order->customerId || $user->isManager();
   }
 
-  public function store(User $user): bool
+  public function create(User $user): bool
   {
-    return $user->isCustomer();
+    return true;
   }
 
   public function update(User $user, Order $order): bool
