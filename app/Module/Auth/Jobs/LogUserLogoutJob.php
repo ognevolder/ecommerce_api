@@ -7,7 +7,7 @@ use App\Module\Logging\Enums\Action;
 use App\Module\Logging\Enums\Scope;
 use App\Module\Logging\Models\Log;
 
-class LogUserRegistrationJob extends AuthenticationJob
+class LogUserLogoutJob extends AuthenticationJob
 {
   public function handle(): void
   {
@@ -17,8 +17,8 @@ class LogUserRegistrationJob extends AuthenticationJob
     Log::create([
       'user_id' => $this->user->id,
       'scope' => Scope::Auth,
-      'action' => Action::Registration,
-      'info' => "{$user} [{$name}] registered at {$time}."
+      'action' => Action::Login,
+      'info' => "{$user} [{$name}] logged out at {$time}."
     ]);
   }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\User\DTO;
+namespace App\Module\Auth\DTOs;
 
 class UserLoginDTO
 {

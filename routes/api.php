@@ -3,6 +3,8 @@
 use App\Application\Http\Controllers\AdminController;
 use App\Application\Http\Controllers\AuthController;
 use App\Application\Http\Controllers\ProductController;
+use App\Presentation\Http\Controllers\Auth\AuthenticationController;
+use App\Presentation\Http\Controllers\Auth\LogoutController;
 use App\Presentation\Http\Controllers\Auth\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +17,7 @@ Route::prefix('/v1')->group(function () {
   // --- Authentication.
   Route::middleware('throttle:3,1')->group(function () {
     Route::post('/registration', RegistrationController::class)->name('auth.registration');
-    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('/login', AuthenticationController::class)->name('auth.login');
   });
   // --- Product.
   Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -29,8 +31,8 @@ Route::prefix('/v1')->group(function () {
  */
 Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
   // --- Authentication.
-  Route::post('/me/logout', [AuthController::class, 'logout'])->name('auth.logout');
-  Route::post('/me/terminate', [AuthController::class, 'terminate'])->name('auth.terminate');
+  Route::get('/me', function () { echo "Gay"; })->name('profile');
+  Route::post('/me/logout', LogoutController::class)->name('auth.logout');
 
   // --- Admin.
   Route::prefix('/admin/products')->name('admin.products.')->group(function () {

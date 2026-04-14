@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Domain\User\Exceptions;
+namespace App\Module\Auth\Exceptions;
 
-use App\Domain\User\Shared\UserDomainException;
-
-class InvalidCredentialsException extends UserDomainException
+class InvalidCredentialsException extends \DomainException
 {
   public function __construct()
   {

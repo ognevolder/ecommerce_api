@@ -3,6 +3,7 @@
 namespace App\Module\Auth\Models;
 
 use App\Module\Auth\Enums\UserRole;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,6 +16,11 @@ class User extends Authenticatable
 
   protected $fillable = ['name', 'password', 'email'];
   protected $hidden = ['password'];
+
+  protected static function newFactory()
+  {
+    return UserFactory::new();
+  }
 
   protected function casts(): array
   {
