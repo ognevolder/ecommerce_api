@@ -3,6 +3,7 @@
 use App\Application\Http\Controllers\AdminController;
 use App\Application\Http\Controllers\AuthController;
 use App\Application\Http\Controllers\ProductController;
+use App\Presentation\Http\Controllers\Auth\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/v1')->group(function () {
   // --- Authentication.
   Route::middleware('throttle:3,1')->group(function () {
-    Route::post('/registration', [AuthController::class, 'register'])->name('auth.registration');
+    Route::post('/registration', RegistrationController::class)->name('auth.registration');
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
   });
   // --- Product.
