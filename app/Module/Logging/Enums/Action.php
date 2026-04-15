@@ -9,5 +9,6 @@ enum Action: string
   case Login = 'login';
   case Logout = 'logout';
 
-  case INSERTION = 'insertion';
+  case Insertion = 'insertion';
+  case Editing = 'editing';
 }

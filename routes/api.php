@@ -6,6 +6,9 @@ use App\Application\Http\Controllers\ProductController;
 use App\Presentation\Http\Controllers\Auth\AuthenticationController;
 use App\Presentation\Http\Controllers\Auth\LogoutController;
 use App\Presentation\Http\Controllers\Auth\RegistrationController;
+use App\Presentation\Http\Controllers\Product\IndexPublicProductController;
+use App\Presentation\Http\Controllers\Product\InsertProductController;
+use App\Presentation\Http\Controllers\Product\ShowPublicProductController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -20,8 +23,8 @@ Route::prefix('/v1')->group(function () {
     Route::post('/login', AuthenticationController::class)->name('auth.login');
   });
   // --- Product.
-  Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-  Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+  Route::get('/products', IndexPublicProductController::class)->name('products.public.index');
+  Route::get('/products/{id}', ShowPublicProductController::class)->name('products.public.show');
 });
 
 /**
@@ -38,7 +41,7 @@ Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
   Route::prefix('/admin/products')->name('admin.products.')->group(function () {
     Route::get('/list', [AdminController::class, 'list'])->name('list');
     Route::get('/{id}', [AdminController::class, 'show'])->name('show');
-    Route::post('/insert', [AdminController::class, 'insert'])->name('insert');
+    Route::post('/insert', InsertProductController::class)->name('insert');
   });
 
   // Insert
