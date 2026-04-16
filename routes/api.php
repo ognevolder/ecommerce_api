@@ -1,14 +1,14 @@
 <?php
 
-use App\Application\Http\Controllers\AdminController;
-use App\Application\Http\Controllers\AuthController;
-use App\Application\Http\Controllers\ProductController;
 use App\Presentation\Http\Controllers\Auth\AuthenticationController;
 use App\Presentation\Http\Controllers\Auth\LogoutController;
 use App\Presentation\Http\Controllers\Auth\RegistrationController;
+use App\Presentation\Http\Controllers\Product\IndexPrivateProductController;
 use App\Presentation\Http\Controllers\Product\IndexPublicProductController;
-use App\Presentation\Http\Controllers\Product\InsertProductController;
+use App\Presentation\Http\Controllers\Product\ShowPrivateProductController;
+use App\Presentation\Http\Controllers\Product\StoreProductController;
 use App\Presentation\Http\Controllers\Product\ShowPublicProductController;
+use App\Presentation\Http\Controllers\Product\UpdateProductController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -39,19 +39,9 @@ Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
 
   // --- Admin.
   Route::prefix('/admin/products')->name('admin.products.')->group(function () {
-    Route::get('/list', [AdminController::class, 'list'])->name('list');
-    Route::get('/{id}', [AdminController::class, 'show'])->name('show');
-    Route::post('/insert', InsertProductController::class)->name('insert');
+    Route::get('/index', IndexPrivateProductController::class)->name('index');
+    Route::get('/{product}', ShowPrivateProductController::class)->name('show');
+    Route::post('/store', StoreProductController::class)->name('store');
+    Route::patch('/update/{product}', UpdateProductController::class)->name('update');
   });
-
-  // Insert
-  Route::post('/products', [ProductController::class, 'insert'])->name('products.insert');
-  // Edit
-  Route::post('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-  // Archive (status)
-  Route::patch('/products/archive/{product}', [ProductController::class, 'archive'])->name('products.archive');
-  // Publish (status)
-  Route::patch('/products/publish/{product}', [ProductController::class, 'publish'])->name('products.publish');
-  // Draft (status)
-  Route::patch('/products/draft/{product}', [ProductController::class, 'draft'])->name('products.draft');
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Product\Policies;
+namespace App\Presentation\Http\Policies\Product;
 
 use App\Module\Auth\Enums\UserRole;
 use App\Module\Auth\Models\User;
@@ -8,19 +8,28 @@ use App\Module\Product\Models\Product;
 
 class ProductPolicy
 {
-  public function insert(User $user): bool
+  public function before(User $user, string $ability)
   {
-    return $user->role === UserRole::Admin ? true : false;
+    return $user->role === UserRole::Admin ? true : null;
   }
 
+  public function viewAll(User $user): bool
+  {
+    return false;
+  }
 
-  // public function list(User $user, Product $product): bool
-  // {
-  //   return true;
-  // }
+  public function show(User $user, Product $product): bool
+  {
+    return false;
+  }
 
-  // public function show(User $user, Product $product): bool
-  // {
-  //   return true;
-  // }
+  public function store(User $user): bool
+  {
+    return false;
+  }
+
+  public function update(User $user, Product $product): bool
+  {
+    return false;
+  }
 }

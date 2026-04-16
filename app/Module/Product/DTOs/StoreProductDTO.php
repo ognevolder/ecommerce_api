@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Module\Product\DTO;
+namespace App\Module\Product\DTOs;
 
-class InsertProductDTO
+class StoreProductDTO
 {
   public function __construct(
     public string $title,
