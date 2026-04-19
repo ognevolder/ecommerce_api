@@ -3,8 +3,11 @@
 use App\Presentation\Http\Controllers\Auth\AuthenticationController;
 use App\Presentation\Http\Controllers\Auth\LogoutController;
 use App\Presentation\Http\Controllers\Auth\RegistrationController;
+use App\Presentation\Http\Controllers\Product\ArchiveProductController;
+use App\Presentation\Http\Controllers\Product\DraftProductController;
 use App\Presentation\Http\Controllers\Product\IndexPrivateProductController;
 use App\Presentation\Http\Controllers\Product\IndexPublicProductController;
+use App\Presentation\Http\Controllers\Product\PublishProductController;
 use App\Presentation\Http\Controllers\Product\ShowPrivateProductController;
 use App\Presentation\Http\Controllers\Product\StoreProductController;
 use App\Presentation\Http\Controllers\Product\ShowPublicProductController;
@@ -43,5 +46,8 @@ Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
     Route::get('/{product}', ShowPrivateProductController::class)->name('show');
     Route::post('/store', StoreProductController::class)->name('store');
     Route::patch('/update/{product}', UpdateProductController::class)->name('update');
+    Route::patch('/publish/{id}', PublishProductController::class)->name('publish');
+    Route::patch('/draft/{id}', DraftProductController::class)->name('draft');
+    Route::patch('/archive/{id}', ArchiveProductController::class)->name('archive');
   });
 });

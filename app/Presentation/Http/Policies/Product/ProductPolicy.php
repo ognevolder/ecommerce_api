@@ -32,4 +32,19 @@ class ProductPolicy
   {
     return false;
   }
+
+  public function publish(User $user): bool
+  {
+    return false;
+  }
+
+  public function draft(User $user): bool
+  {
+    return false;
+  }
+
+  public function archive(User $user): bool
+  {
+    return false;
+  }
 }

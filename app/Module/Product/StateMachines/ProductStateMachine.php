@@ -18,7 +18,7 @@ class ProductStateMachine
       ProductStatus::Archived->value
       ],
     // Archived
-    ProductStatus::Archived->value => [ProductStatus::Draft]
+    ProductStatus::Archived->value => []
   ];
 
   // --- Builder.
@@ -34,7 +34,7 @@ class ProductStateMachine
    */
   public function canTransitionTo(ProductStatus $newStatus): bool
   {
-    $currentStatus = $this->product->status->value;
+    $currentStatus = $this->product->status;
     $allowed = $this->transitions[$currentStatus] ?? [];
     return in_array($newStatus->value, $allowed);
   }
@@ -44,7 +44,7 @@ class ProductStateMachine
     $transitionRequest = $this->canTransitionTo($newStatus);
     if (! $transitionRequest) {
       throw new TransitionDeniedException(
-        message: "Transition from {$this->product->status->value} to {$newStatus->value} is denied.");
+        message: "Transition from {$this->product->status} to {$newStatus->value} is denied.");
     }
     $this->product->update([
       'status' => $newStatus

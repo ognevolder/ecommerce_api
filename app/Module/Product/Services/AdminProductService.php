@@ -4,6 +4,7 @@ namespace App\Module\Product\Services;
 
 use App\Module\Product\DTOs\StoreProductDTO;
 use App\Module\Product\DTOs\UpdateProductDTO;
+use App\Module\Product\Enums\ProductStatus;
 use App\Module\Product\Events\ProductInsertionEvent;
 use App\Module\Product\Events\ProductUpdatedEvent;
 use App\Module\Product\Exceptions\EmptyProductCollectionException;
@@ -70,6 +71,12 @@ class AdminProductService
     return $product;
   }
 
+  /**
+   * Update Product data
+   *
+   * @param UpdateProductDTO $dto
+   * @return Product
+   */
   public function update(UpdateProductDTO $dto): Product
   {
     // --- Action.
@@ -93,30 +100,34 @@ class AdminProductService
     // --- Return.
     return $product;
   }
+
+  public function publish(int $id): void
+  {
+    $product = Product::where('id', $id)->first();
+    if (! $product) {
+      throw new ProductNotFoundException;
+    }
+
+    $product->stateMachine()->transitionTo(ProductStatus::Public);
+  }
+
+  public function draft(int $id): void
+  {
+    $product = Product::where('id', $id)->first();
+    if (! $product) {
+      throw new ProductNotFoundException;
+    }
+
+    $product->stateMachine()->transitionTo(ProductStatus::Draft);
+  }
+
+  public function archive(int $id): void
+  {
+    $product = Product::where('id', $id)->first();
+    if (! $product) {
+      throw new ProductNotFoundException;
+    }
+
+    $product->stateMachine()->transitionTo(ProductStatus::Archived);
+  }
 }
-
-
-
-
-// public function update(UpdateProductDTO $dto): Product
-//   {
-//     return Product::update($dto->attributes);
-//   }
-
-//   public function archive(Product $product): Product
-//   {
-//     $product->stateMachine()->transitionTo(ProductStatus::ARCHIVED);
-//     return $product->fresh();
-//   }
-
-//   public function publish(Product $product): Product
-//   {
-//     $product->stateMachine()->transitionTo(ProductStatus::PUBLIC);
-//     return $product->fresh();
-//   }
-
-//   public function draft(Product $product): Product
-//   {
-//     $product->stateMachine()->transitionTo(ProductStatus::DRAFT);
-//     return $product->fresh();
-//   }
