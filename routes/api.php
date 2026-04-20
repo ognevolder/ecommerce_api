@@ -3,6 +3,8 @@
 use App\Presentation\Http\Controllers\Auth\AuthenticationController;
 use App\Presentation\Http\Controllers\Auth\LogoutController;
 use App\Presentation\Http\Controllers\Auth\RegistrationController;
+use App\Presentation\Http\Controllers\Cart\AddCartItemsController;
+use App\Presentation\Http\Controllers\Cart\RemoveCartItemsController;
 use App\Presentation\Http\Controllers\Product\ArchiveProductController;
 use App\Presentation\Http\Controllers\Product\DraftProductController;
 use App\Presentation\Http\Controllers\Product\IndexPrivateProductController;
@@ -39,6 +41,10 @@ Route::middleware('auth:sanctum')->prefix('/v1')->group(function () {
   // --- Authentication.
   Route::get('/me', function () { echo "Gay"; })->name('profile');
   Route::post('/me/logout', LogoutController::class)->name('auth.logout');
+
+  // --- Cart.
+  Route::post('/cart/add', AddCartItemsController::class)->name('cart.add');
+  Route::post('/cart/remove', RemoveCartItemsController::class)->name('cart.remove');
 
   // --- Admin.
   Route::prefix('/admin/products')->name('admin.products.')->group(function () {

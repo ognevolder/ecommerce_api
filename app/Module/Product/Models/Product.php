@@ -37,4 +37,9 @@ class Product extends Model
   public function availability(): int {
     return $this->quantity - $this->reserved;
   }
+
+  public function price()
+  {
+    return $this->price;
+  }
 }
