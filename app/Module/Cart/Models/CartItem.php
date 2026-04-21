@@ -11,7 +11,7 @@ class CartItem extends Model
 {
   use HasFactory, SerializesModels;
 
-  protected $fillable = ['cart_id', 'product_id', 'price', 'quantity'];
+  protected $fillable = ['cart_id', 'product_id', 'price', 'quantity', 'expires_at'];
 
     public function cart()
     {

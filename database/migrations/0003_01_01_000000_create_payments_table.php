@@ -13,7 +13,7 @@ return new class extends Migration
       $table->id();
       $table->foreignId('user_id')->constrained()->cascadeOnDelete();
       $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-      $table->enum('status', PaymentStatus::cases())->default(PaymentStatus::AWAITING);
+      $table->string('status');
       $table->timestamps();
     });
   }

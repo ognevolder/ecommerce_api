@@ -5,6 +5,7 @@ namespace App\Module\Auth\Listeners;
 use App\Module\Auth\Events\UserRegistrationEvent;
 use App\Module\Auth\Jobs\LogUserRegistrationJob;
 use App\Module\Auth\Jobs\SendWelcomeEmailJob;
+use App\Module\Cart\Jobs\CreateCustomerCartJob;
 
 class UserRegistrationListener
 {
@@ -14,7 +15,7 @@ class UserRegistrationListener
     // 1. Email
     SendWelcomeEmailJob::dispatch($user)->onQueue('default');
 
-    // 2. Log
+    // 3. Log
     LogUserRegistrationJob::dispatch($user)->onQueue('low');
   }
 }

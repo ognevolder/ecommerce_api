@@ -4,6 +4,7 @@ namespace App\Presentation\Http\Controllers\Cart;
 
 use App\Module\Cart\DTOs\CartServiceDTO;
 use App\Module\Cart\Services\CartService;
+use App\Module\Product\Shared\ProductDomainException;
 use App\Presentation\Http\Requests\Cart\CartRequest;
 use App\Presentation\Http\Resources\Cart\CartResource;
 use App\Presentation\Http\Responses\ApiResponse;
@@ -23,7 +24,14 @@ class AddCartItemsController
         user_id: $user->id
     );
 
-    $cart = $this->service->add($dto);
+    try {
+      $cart = $this->service->add($dto);
+    } catch (ProductDomainException $e) {
+      return ApiResponse::error(
+        message: $e->getMessage(),
+        code: $e->getCode()
+      );
+    }
 
     return ApiResponse::success(
         data: new CartResource($cart),

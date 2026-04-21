@@ -16,6 +16,8 @@ return new class extends Migration
         ->constrained()->cascadeOnDelete();
       $table->integer('price');
       $table->integer('quantity');
+      $table->timestamp('expires_at');
+      $table->timestamp('released_at')->nullable()->index();
       $table->timestamps();
     });
   }

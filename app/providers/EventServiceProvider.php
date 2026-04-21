@@ -8,6 +8,8 @@ use App\Module\Auth\Events\UserRegistrationEvent;
 use App\Module\Auth\Listeners\UserLoginListener;
 use App\Module\Auth\Listeners\UserLogoutListener;
 use App\Module\Auth\Listeners\UserRegistrationListener;
+use App\Module\Cart\Events\CartItemAdded;
+use App\Module\Cart\Listeners\CartItemListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -21,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
     ],
     UserLogoutEvent::class => [
       UserLogoutListener::class
+    ],
+    CartItemAdded::class => [
+      CartItemListener::class
     ]
   ];
 }

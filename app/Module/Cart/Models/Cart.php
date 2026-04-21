@@ -2,6 +2,7 @@
 
 namespace App\Module\Cart\Models;
 
+use App\Module\Cart\Events\CartItemAdded;
 use App\Module\Product\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ class Cart extends Model
   // --- Business Logic
   public function addProduct(Product $product, int $quantity): CartItem
   {
-    // Fetch addProduct
+    // Fetch item
     $item = $this->items()
       ->where('product_id', $product->id)
       ->first();
@@ -34,14 +35,18 @@ class Cart extends Model
       $item = $this->items()->create([
         'product_id' => $product->id,
         'price' => $product->price,
-        'quantity' => $quantity
+        'quantity' => $quantity,
+        'expires_at' => now()->addMinutes(15)
       ]);
     } else {
       $item->quantity += $quantity;
       $item->save();
     }
 
-    return $item->refresh();
+    $item->refresh();
+    event(new CartItemAdded($item));
+
+    return $item;
   }
 
   /**
